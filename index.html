@@ -1,172 +1,66 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>My Daily Routine</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><title>My Daily Routine</title>
 <style>
 :root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#777;--line:#e5e5e8;--soft:#f1f1f3;--accent:#111;--accentText:#fff}
 body.dark{--bg:#101114;--card:#1b1d21;--text:#f5f5f7;--muted:#aaa;--line:#30333a;--soft:#272a30;--accent:#fff;--accentText:#111}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-.app{max-width:950px;margin:auto;padding:20px 18px 55px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}h1{margin:0 0 4px;font-size:32px}
-.card{background:var(--card);border-radius:20px;padding:17px;margin:13px 0;box-shadow:0 2px 10px #0001}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:var(--soft);padding:12px;border-radius:13px}.stat b{font-size:23px;display:block}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif}.app{max-width:950px;margin:auto;padding:20px 18px 55px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}h1{margin:0 0 4px;font-size:32px}
+.card{background:var(--card);border-radius:20px;padding:17px;margin:13px 0;box-shadow:0 2px 10px #0001}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:var(--soft);padding:12px;border-radius:13px}.stat b{font-size:23px;display:block}
 .bar{height:10px;background:var(--line);border-radius:9px;margin-top:12px}.fill{height:100%;background:var(--accent);width:0;border-radius:9px;transition:.2s}
-.row{display:grid;grid-template-columns:32px 90px 1fr auto;gap:8px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
-.row:last-child{border:0}.done .task{text-decoration:line-through;color:var(--muted)}.time,.detail,.muted,.task-streak{color:var(--muted);font-size:12px}.task{font-size:15px}.detail{display:block}.task-streak{white-space:nowrap}.task-streak b{color:var(--text)}
 button{border:0;border-radius:11px;padding:10px 13px;background:var(--accent);color:var(--accentText);font-weight:700}button.secondary{background:var(--soft);color:var(--text)}
 input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text)}
-.add{display:grid;grid-template-columns:1fr 100px 1fr auto;gap:8px}.save-note{font-size:12px;color:var(--muted)}
-.status{font-size:13px;color:var(--muted)}.status.ok{color:#2e8b57}.status.warn{color:#b06b00}
-@media(max-width:650px){.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:30px 72px 1fr auto}.add{grid-template-columns:1fr 100px}.add input:nth-child(3){grid-column:1/-1}.add button{grid-column:1/-1}}
-</style>
-</head>
-<body>
-<main class="app">
-<header>
-<div><h1>My Daily Routine</h1><div class="muted" id="dateLabel"></div></div>
-<div class="toolbar"><button class="secondary" id="theme">🌙 Dark</button><button id="today">Today</button></div>
-</header>
-
-<div class="card">
-<div class="stats">
-<div class="stat"><b id="pct">0%</b><span class="muted">today</span></div>
-<div class="stat"><b id="main">0</b><span class="muted">🔥 full-day streak</span></div>
-<div class="stat"><b id="best">0</b><span class="muted">🏆 best streak</span></div>
-<div class="stat"><b id="count">0/0</b><span class="muted">activities</span></div>
-</div>
-<div class="bar"><div class="fill" id="fill"></div></div>
-<p class="muted">Your checkmarks are saved automatically on the iPad. Google Sheets is updated once per day to avoid duplicate entries.</p>
-</div>
-
-<div class="card toolbar">
-<input id="date" type="date"><button class="secondary" id="all">Complete all</button><button class="secondary" id="reset">Reset day</button>
-</div>
-
+.row{display:grid;grid-template-columns:32px 90px 1fr auto;gap:8px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}.done .task{text-decoration:line-through;color:var(--muted)}
+.time,.detail,.muted,.task-streak{color:var(--muted);font-size:12px}.task{font-size:15px}.detail{display:block}.task-streak{white-space:nowrap}.task-streak b{color:var(--text)}
+.manager{display:none}.manager.open{display:block}.task-edit{display:grid;grid-template-columns:1fr 90px 1fr auto;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}.add{display:grid;grid-template-columns:1fr 90px 1fr 120px auto;gap:8px}.status{font-size:13px;color:var(--muted)}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:29px 70px 1fr auto}.task-edit{grid-template-columns:1fr 90px}.task-edit input:nth-child(3){grid-column:1/-1}.add{grid-template-columns:1fr 90px}.add input:nth-child(3){grid-column:1/-1}.add select,.add button{grid-column:1/-1}}
+</style></head>
+<body><main class="app">
+<header><div><h1>My Daily Routine</h1><div class="muted" id="dateLabel"></div></div><div class="toolbar"><button class="secondary" id="theme">🌙 Dark</button><button id="today">Today</button></div></header>
+<div class="card"><div class="stats"><div class="stat"><b id="pct">0%</b>Today</div><div class="stat"><b id="main">0</b>🔥 Full-day streak</div><div class="stat"><b id="best">0</b>🏆 Best streak</div><div class="stat"><b id="count">0/0</b>Activities</div></div><div class="bar"><div class="fill" id="fill"></div></div><p class="muted">Your checkmarks are saved automatically on this device.</p></div>
+<div class="card toolbar"><input id="date" type="date"><button class="secondary" id="all">Complete all</button><button class="secondary" id="reset">Reset day</button></div>
 <div id="routine"></div>
-
-<div class="card">
-<h3>➕ Add a task</h3>
-<div class="add">
-<input id="name" placeholder="Task name">
-<input id="time" placeholder="Time">
-<input id="detail" placeholder="Optional detail">
-<button id="saveTask">Save task</button>
-</div>
-<p class="save-note">Tap <b>Save task</b> to permanently add it to your routine. It will be included in future daily tracking.</p>
-</div>
-
-<div class="card">
-<div class="toolbar" style="justify-content:space-between">
-<div class="status" id="sync">☁️ Daily sync scheduled</div>
-<button class="secondary" id="syncNow">Sync now</button>
-</div>
-<p class="save-note">The app automatically attempts the daily sync at 10:35 PM when the app is open, and also syncs when you reopen it after the daily sync time. The manual button is only a backup.</p>
-</div>
+<div class="card"><div class="toolbar" style="justify-content:space-between"><h3 style="margin:0">⚙️ Manage Tasks</h3><button class="secondary" id="toggle">Show / Hide</button></div><div id="manager" class="manager"></div><p class="muted">Archive tasks instead of deleting them so historical progress stays intact.</p></div>
+<div class="card"><h3>➕ Add a task</h3><div class="add"><input id="newName" placeholder="Task name"><input id="newTime" placeholder="Time"><input id="newDetail" placeholder="Optional detail"><select id="newSection"><option>Morning</option><option>Morning Metro — 45 min</option><option>Office</option><option>Evening Metro — 45 min</option><option>Evening</option><option>Custom</option></select><button id="add">Save task</button></div></div>
+<div class="card status" id="sync">☁️ Google Sheets sync ready</div>
 </main>
-
 <script>
-const SHEET_URL="https://script.google.com/macros/s/AKfycbzuvWDEobeEQJ26FdAD1UPSIwzqy7yrOPbSkhfYW26nEiHKcUcqqgfWfIhk8PB06256Ow/exec";
-const DEFAULTS=[
-["Morning","5:30","Wake up",""],["Morning","5:35","Drink water","500–750 ml"],["Morning","5:35–5:45","Bathroom + freshen up",""],["Morning","5:45–5:55","Meditation / breathing","10 minutes"],["Morning","5:55–6:05","Change + prepare for gym",""],["Morning","6:05–7:35","🏋️ Gym block","Travel + workout + return"],["Morning","7:35–7:50","Cool down + freshen up",""],["Morning","7:50–8:10","Bath + grooming",""],["Morning","8:10–8:25","Breakfast",""],["Morning","8:25–8:30","Pack essentials + leave",""],
-["Morning Metro — 45 min","5 min","Settle in + plan",""],["Morning Metro — 45 min","25 min","💻 Deep learning / focused work",""],["Morning Metro — 45 min","10 min","Practice / apply learning",""],["Morning Metro — 45 min","5 min","Write 3 key takeaways",""],
-["Office","10:00–6:00","Workday completed",""],["Office","5 min","Plan tomorrow's top 3 priorities",""],
-["Evening Metro — 45 min","20–25 min","📖 Reading / learning",""],["Evening Metro — 45 min","10 min","Review morning learning",""],["Evening Metro — 45 min","10–15 min","Relax / decompress",""],
-["Evening","8:00–8:15","Change + unwind",""],["Evening","8:15–8:40","Dinner",""],["Evening","8:40–9:10","Family / personal time",""],["Evening","9:10–9:40","🚶 Evening walk","30 minutes"],["Evening","9:40–10:00","Prepare clothes + bag",""],["Evening","10:00–10:20","Light reading / relaxation",""],["Evening","10:20–10:30","Wind down — no screens",""],["Evening","10:30","😴 Sleep","Target 7–8 hours"]
-];
-
-let items=JSON.parse(localStorage.getItem("routine-items-v3")||"null")||JSON.parse(localStorage.getItem("routine-items-v2")||"null")||DEFAULTS;
+const URL="https://script.google.com/macros/s/AKfycbzuvWDEobeEQJ26FdAD1UPSIwzqy7yrOPbSkhfYW26nEiHKcUcqqgfWfIhk8PB06256Ow/exec";
+const defaults=[["Morning","5:30","Wake up",""],["Morning","5:35","Drink water","500–750 ml"],["Morning","5:45–5:55","Meditation / breathing","10 minutes"],["Morning","6:05–7:35","🏋️ Gym block","Travel + workout + return"],["Morning","7:50–8:10","Bath + grooming",""],["Morning","8:10–8:25","Breakfast",""],["Morning Metro — 45 min","25 min","💻 Deep learning / focused work",""],["Morning Metro — 45 min","10 min","Practice / apply learning",""],["Morning Metro — 45 min","5 min","Write 3 key takeaways",""],["Office","10:00–6:00","Workday completed",""],["Office","5 min","Plan tomorrow's top 3 priorities",""],["Evening Metro — 45 min","20–25 min","📖 Reading / learning",""],["Evening Metro — 45 min","10 min","Review morning learning",""],["Evening","8:15–8:40","Dinner",""],["Evening","9:10–9:40","🚶 Evening walk","30 minutes"],["Evening","10:30","😴 Sleep","Target 7–8 hours"]];
+let items=JSON.parse(localStorage.getItem("routine-items-personal-v6")||"null");
+if(!items){items=defaults.map((x,i)=>({id:"task-"+i,section:x[0],time:x[1],name:x[2],detail:x[3],active:true}));localStorage.setItem("routine-items-personal-v6",JSON.stringify(items))}
 const dateEl=document.getElementById("date");
-
-function today(){
- const d=new Date();
- return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function dayKey(d){return "routine-v3-"+d}
-function getState(d){return new Set(JSON.parse(localStorage.getItem(dayKey(d))||"[]"))}
-function saveState(s,d=dateEl.value){localStorage.setItem(dayKey(d),JSON.stringify([...s]));}
-function allDone(d){return getState(d).size===items.length}
-function fullStreak(end){
- let n=0,d=new Date(end+"T12:00:00");
- while(allDone(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}
- return n;
-}
-function taskStreak(i,end){
- let n=0,d=new Date(end+"T12:00:00");
- while(getState(d.toISOString().slice(0,10)).has(i)){n++;d.setDate(d.getDate()-1)}
- return n;
-}
-function bestStreak(){
- let best=0,run=0,d=new Date(dateEl.value+"T12:00:00");
- for(let i=3650;i>=0;i--){let x=new Date(d);x.setDate(d.getDate()-i);if(allDone(x.toISOString().slice(0,10)))run++;else run=0;best=Math.max(best,run)}
- return best;
-}
+function today(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function state(d){return new Set(JSON.parse(localStorage.getItem("routine-day-"+d)||"[]"))}
+function save(s,d=dateEl.value){localStorage.setItem("routine-day-"+d,JSON.stringify([...s]))}
+function active(){return items.filter(x=>x.active!==false)}
+function allDone(d){let a=active(),s=state(d);return a.length>0&&a.every(x=>s.has(x.id))}
+function taskStreak(id,end){let n=0,d=new Date(end+"T12:00:00");while(state(d.toISOString().slice(0,10)).has(id)){n++;d.setDate(d.getDate()-1)}return n}
+function fullStreak(end){let n=0,d=new Date(end+"T12:00:00");while(allDone(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}return n}
+function bestStreak(){let best=0,run=0,d=new Date(dateEl.value+"T12:00:00");for(let i=3650;i>=0;i--){let x=new Date(d);x.setDate(d.getDate()-i);if(allDone(x.toISOString().slice(0,10)))run++;else run=0;best=Math.max(best,run)}return best}
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+function persist(){localStorage.setItem("routine-items-personal-v6",JSON.stringify(items))}
 function render(){
- const s=getState(dateEl.value),p=Math.round(s.size/items.length*100);
- document.getElementById("pct").textContent=p+"%";document.getElementById("count").textContent=s.size+"/"+items.length;
- document.getElementById("main").textContent=fullStreak(dateEl.value);document.getElementById("best").textContent=bestStreak();
- document.getElementById("fill").style.width=p+"%";
+ const a=active(),s=state(dateEl.value),done=a.filter(x=>s.has(x.id)).length,p=a.length?Math.round(done/a.length*100):0;
+ document.getElementById("pct").textContent=p+"%";document.getElementById("count").textContent=done+"/"+a.length;document.getElementById("main").textContent=fullStreak(dateEl.value);document.getElementById("best").textContent=bestStreak();document.getElementById("fill").style.width=p+"%";
  document.getElementById("dateLabel").textContent=new Date(dateEl.value+"T12:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
  const root=document.getElementById("routine");root.innerHTML="";
- [...new Set(items.map(x=>x[0]))].forEach(group=>{
-  const c=document.createElement("div");c.className="card";c.innerHTML="<h3>"+group+"</h3>";
-  items.forEach((x,i)=>{
-   if(x[0]!==group)return;
-   const l=document.createElement("label");l.className="row"+(s.has(i)?" done":"");
-   l.innerHTML='<input type="checkbox" '+(s.has(i)?"checked":"")+'><span class="time">'+x[1]+'</span><span class="task">'+x[2]+'<span class="detail">'+x[3]+'</span></span><span class="task-streak">🔥 <b>'+taskStreak(i,dateEl.value)+'</b> day</span>';
-   l.querySelector("input").onchange=()=>{
-     const q=getState(dateEl.value);q.has(i)?q.delete(i):q.add(i);saveState(q);render();markDirty();
-   };
-   c.append(l);
-  });root.append(c);
- });
+ [...new Set(a.map(x=>x.section))].forEach(g=>{let c=document.createElement("div");c.className="card";c.innerHTML="<h3>"+esc(g)+"</h3>";a.filter(x=>x.section===g).forEach(x=>{let l=document.createElement("label");l.className="row"+(s.has(x.id)?" done":"");l.innerHTML='<input type="checkbox" '+(s.has(x.id)?"checked":"")+'><span class="time">'+esc(x.time)+'</span><span class="task">'+esc(x.name)+'<span class="detail">'+esc(x.detail)+'</span></span><span class="task-streak">🔥 <b>'+taskStreak(x.id,dateEl.value)+'</b> day</span>';l.querySelector("input").onchange=()=>{let q=state(dateEl.value);q.has(x.id)?q.delete(x.id):q.add(x.id);save(q);render();syncDay(dateEl.value)};c.append(l)});root.append(c)});
+ renderManager();
 }
-function markDirty(){
- localStorage.setItem("routine-dirty-"+dateEl.value,"1");
- document.getElementById("sync").textContent="☁️ Saved on iPad • daily Google Sheets sync pending";
-}
-function hasSynced(d){return localStorage.getItem("routine-synced-"+d)==="1"}
+function renderManager(){let m=document.getElementById("manager");m.innerHTML="";items.forEach((x,i)=>{let d=document.createElement("div");d.className="task-edit";d.innerHTML='<input value="'+esc(x.name)+'"><input value="'+esc(x.time)+'"><input value="'+esc(x.detail)+'"><button class="secondary">'+(x.active!==false?"🗄️ Archive":"↩️ Restore")+'</button>';let q=d.querySelectorAll("input");q.forEach(z=>z.onchange=()=>{items[i].name=q[0].value.trim()||x.name;items[i].time=q[1].value.trim()||"—";items[i].detail=q[2].value.trim();persist();render();syncDay(dateEl.value)});d.querySelector("button").onclick=()=>{items[i].active=x.active===false;persist();render();syncDay(dateEl.value)};m.append(d)})}
 async function syncDay(d,force=false){
- if(!force && hasSynced(d))return;
- const s=getState(d);
+ const last=localStorage.getItem("routine-synced-"+d);if(!force&&last===JSON.stringify(state(d)))return;
  document.getElementById("sync").textContent="☁️ Updating Google Sheets…";
- const payload={date:d,items:items.map((x,i)=>({activity:x[2],time:x[1],completed:s.has(i)}))};
- try{
-  await fetch(SHEET_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
-  localStorage.setItem("routine-synced-"+d,"1");localStorage.removeItem("routine-dirty-"+d);
-  document.getElementById("sync").textContent="☁️ Google Sheets updated for "+d;
- }catch(e){document.getElementById("sync").textContent="📱 Saved on iPad • Sheets sync will retry later";}
-}
-function syncEligibleDays(){
- const d=new Date();const hh=d.getHours(),mm=d.getMinutes();
- if(hh>22 || (hh===22&&mm>=35)){
-   const ds=[today()];
-   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);ds.push(yesterday.toISOString().slice(0,10));
-   ds.forEach(x=>syncDay(x));
- }
-}
-document.getElementById("theme").onclick=()=>{
- document.body.classList.toggle("dark");const dark=document.body.classList.contains("dark");
- localStorage.setItem("darkMode",dark?"1":"0");document.getElementById("theme").textContent=dark?"☀️ Light":"🌙 Dark";
-};
-if(localStorage.getItem("darkMode")==="1"){document.body.classList.add("dark");document.getElementById("theme").textContent="☀️ Light";}
-dateEl.value=today();dateEl.onchange=()=>{render();syncEligibleDays()};
-document.getElementById("today").onclick=()=>{dateEl.value=today();render()};
-document.getElementById("all").onclick=()=>{saveState(new Set(items.map((_,i)=>i)));render();markDirty()};
-document.getElementById("reset").onclick=()=>{if(confirm("Reset this day's progress?")){saveState(new Set());render();markDirty()}};
-document.getElementById("saveTask").onclick=()=>{
- const name=document.getElementById("name").value.trim();if(!name){alert("Enter a task name.");return}
- items.push(["Custom",document.getElementById("time").value.trim()||"—",name,document.getElementById("detail").value.trim()]);
- localStorage.setItem("routine-items-v3",JSON.stringify(items));
- document.getElementById("name").value="";document.getElementById("time").value="";document.getElementById("detail").value="";
- render();
- document.getElementById("sync").textContent="✓ Task saved to your routine";
-};
-document.getElementById("syncNow").onclick=()=>syncDay(dateEl.value,true);
-render();
-syncEligibleDays();
-setInterval(syncEligibleDays,60000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden){render();syncEligibleDays()}});
-</script>
-</body></html>
+ const payload={action:"syncDay",date:d,items:active().map(x=>({id:x.id,activity:x.name,time:x.time,section:x.section,detail:x.detail,completed:state(d).has(x.id)}))};
+ try{await fetch(URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});localStorage.setItem("routine-synced-"+d,JSON.stringify(state(d)));document.getElementById("sync").textContent="☁️ Google Sheets updated"}catch(e){document.getElementById("sync").textContent="📱 Saved on iPad • Sheets sync pending"}}
+function nightSync(){let d=new Date();if(d.getHours()>22||(d.getHours()===22&&d.getMinutes()>=35))syncDay(today())}
+dateEl.value=today();
+document.getElementById("theme").onclick=()=>{document.body.classList.toggle("dark");let d=document.body.classList.contains("dark");localStorage.setItem("routine-dark",d?"1":"0");document.getElementById("theme").textContent=d?"☀️ Light":"🌙 Dark"};
+if(localStorage.getItem("routine-dark")==="1"){document.body.classList.add("dark");document.getElementById("theme").textContent="☀️ Light"}
+dateEl.onchange=render;document.getElementById("today").onclick=()=>{dateEl.value=today();render()};document.getElementById("all").onclick=()=>{save(new Set(active().map(x=>x.id)));render();syncDay(dateEl.value,true)};document.getElementById("reset").onclick=()=>{if(confirm("Reset this day?")){save(new Set());render();syncDay(dateEl.value,true)}};
+document.getElementById("toggle").onclick=()=>document.getElementById("manager").classList.toggle("open");
+document.getElementById("add").onclick=()=>{let n=document.getElementById("newName").value.trim();if(!n)return alert("Enter a task name");items.push({id:"task-"+Date.now(),section:document.getElementById("newSection").value,time:document.getElementById("newTime").value.trim()||"—",name:n,detail:document.getElementById("newDetail").value.trim(),active:true});persist();document.getElementById("newName").value="";document.getElementById("newTime").value="";document.getElementById("newDetail").value="";render();syncDay(dateEl.value,true)};
+render();syncDay(dateEl.value);nightSync();setInterval(nightSync,60000);
+</script></body></html>
