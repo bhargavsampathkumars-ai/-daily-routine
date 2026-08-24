@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>My Daily Routine</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#111}
+*{box-sizing:border-box}body{margin:0;background:#f5f5f7}.app{max-width:900px;margin:auto;padding:24px 18px 48px}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}h1{font-size:32px;margin:0 0 4px}.muted{color:#6b7280}
+.card{background:#fff;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 2px 10px #0000000b}.progress{height:12px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin-top:12px}.fill{height:100%;background:#111;transition:.2s}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:14px;border-radius:15px;background:#f7f7f8}.stat b{font-size:24px;display:block}
+.section-title{font-size:17px;font-weight:700;margin:24px 0 9px}.row{display:grid;grid-template-columns:36px 100px 1fr;gap:8px;align-items:center;padding:13px 2px;border-bottom:1px solid #eee;cursor:pointer}
+.row:last-child{border-bottom:0}.row input{width:21px;height:21px}.time{font-size:13px;font-weight:650;color:#6b7280}.task{font-size:15px}.detail{font-size:12px;color:#8a8f98;margin-top:2px;display:block}.done .task{text-decoration:line-through;color:#8a8f98}
+button{border:0;border-radius:12px;padding:11px 14px;background:#111;color:white;font-weight:650}button.secondary{background:#e9e9ec;color:#111}
+.actions,.sheet{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input[type=date],input[type=url]{font:inherit;padding:10px;border:1px solid #d1d5db;border-radius:10px}
+.notice{font-size:13px;line-height:1.5}@media(max-width:620px){.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:32px 75px 1fr}.app{padding:18px 12px 36px}h1{font-size:28px}}
+</style></head><body><main class="app">
+<header><div><h1>My Daily Routine</h1><div class="muted" id="dateLabel"></div></div><button id="today">Today</button></header>
+<div class="card"><div class="stats"><div class="stat"><b id="percent">0%</b><span class="muted">today</span></div><div class="stat"><b id="streak">0</b><span class="muted">day streak</span></div><div class="stat"><b id="done">0/0</b><span class="muted">activities</span></div></div><div class="progress"><div class="fill" id="fill"></div></div></div>
+<div class="card"><div class="sheet"><input id="date" type="date"><button class="secondary" id="markAll">Complete all</button><button class="secondary" id="reset">Reset</button></div></div>
+<div id="routine"></div>
+<div class="card"><strong>Google Sheets sync</strong><p class="notice muted">Enter your Google Apps Script Web App URL below. The app is designed to work offline first; sync can be enabled after the Sheet endpoint is deployed.</p><div class="sheet"><input id="sheetUrl" type="url" placeholder="https://script.google.com/macros/s/..." style="flex:1;min-width:240px"><button id="saveUrl">Save</button></div><p class="notice" id="syncStatus"></p></div>
+</main>
+<script>
+const items=[
+["Morning","5:30","Wake up",""],["Morning","5:35","Drink water","500–750 ml"],["Morning","5:35–5:45","Bathroom + freshen up",""],["Morning","5:45–5:55","Meditation / breathing","10 minutes"],["Morning","5:55–6:05","Change + prepare for gym",""],["Morning","6:05–7:35","🏋️ Gym block","Travel + ~60 min workout + return"],["Morning","7:35–7:50","Cool down + freshen up",""],["Morning","7:50–8:10","Bath + grooming",""],["Morning","8:10–8:25","Breakfast",""],["Morning","8:25–8:30","Pack essentials + leave",""],
+["Morning Metro — 45 min","5 min","Settle in + plan the session",""],["Morning Metro — 45 min","25 min","💻 Deep learning / focused work","Laptop block"],["Morning Metro — 45 min","10 min","Practice / apply what you learned",""],["Morning Metro — 45 min","5 min","Write 3 key takeaways",""],
+["Office","10:00–6:00","Workday completed",""],["Office","5 min","Plan tomorrow's top 3 priorities",""],
+["Evening Metro — 45 min","20–25 min","📖 Reading / learning",""],["Evening Metro — 45 min","10 min","Review morning learning",""],["Evening Metro — 45 min","10–15 min","Relax / music / decompress",""],
+["Evening","8:00–8:15","Change + unwind",""],["Evening","8:15–8:40","Dinner",""],["Evening","8:40–9:10","Family / personal time",""],["Evening","9:10–9:40","🚶 Evening walk","30 minutes"],["Evening","9:40–10:00","Prepare clothes + bag + essentials",""],["Evening","10:00–10:20","Light reading / relaxation",""],["Evening","10:20–10:30","Wind down — no screens",""],["Evening","10:30","😴 Sleep","Target 7–8 hours"]
+];
+const groups=[...new Set(items.map(x=>x[0]))],dateEl=document.querySelector("#date"),routine=document.querySelector("#routine"),key=d=>"routine-"+d;
+function today(){return new Date().toISOString().slice(0,10)} function getState(){return new Set(JSON.parse(localStorage.getItem(key(dateEl.value))||"[]"))}
+function saveState(s){localStorage.setItem(key(dateEl.value),JSON.stringify([...s]));render()}
+function calcStreak(){let n=0,d=new Date(dateEl.value+"T12:00:00");while(true){let s=new Set(JSON.parse(localStorage.getItem(key(d.toISOString().slice(0,10)))||"[]"));if(s.size<items.length*.8)break;n++;d.setDate(d.getDate()-1)}return n}
+function render(){let s=getState();routine.innerHTML="";groups.forEach(g=>{let sec=document.createElement("section");sec.className="card";let t=document.createElement("div");t.className="section-title";t.textContent=g;sec.append(t);items.filter(x=>x[0]===g).forEach(x=>{let idx=items.indexOf(x),row=document.createElement("label");row.className="row"+(s.has(idx)?" done":"");row.innerHTML=`<input type="checkbox" ${s.has(idx)?"checked":""}><span class="time">${x[1]}</span><span class="task">${x[2]}<span class="detail">${x[3]}</span></span>`;row.querySelector("input").addEventListener("change",()=>{let st=getState();st.has(idx)?st.delete(idx):st.add(idx);saveState(st)});sec.append(row)});routine.append(sec)});let p=Math.round(s.size/items.length*100);document.querySelector("#percent").textContent=p+"%";document.querySelector("#fill").style.width=p+"%";document.querySelector("#done").textContent=s.size+"/"+items.length;document.querySelector("#streak").textContent=calcStreak();document.querySelector("#dateLabel").textContent=new Date(dateEl.value+"T12:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})}
+dateEl.value=today();document.querySelector("#sheetUrl").value=localStorage.getItem("sheetUrl")||"";dateEl.addEventListener("change",render);document.querySelector("#today").onclick=()=>{dateEl.value=today();render()};document.querySelector("#markAll").onclick=()=>saveState(new Set(items.map((_,i)=>i)));document.querySelector("#reset").onclick=()=>{if(confirm("Reset today's progress?"))saveState(new Set())};document.querySelector("#saveUrl").onclick=()=>{localStorage.setItem("sheetUrl",document.querySelector("#sheetUrl").value.trim());document.querySelector("#syncStatus").textContent="Google Sheets URL saved on this device.";};render();
+</script></body></html>
